@@ -77,12 +77,14 @@ OBDOverCANECU::requestReceiveSupportedPIDs( const SID sid )
             SupportedPIDs allSupportedPIDs;
             FWE_LOG_TRACE( "Requesting Supported PIDs from the ECU " + mStreamRxID + " for SID " +
                            std::to_string( toUType( sid ) ) );
-
+            FWE_LOG_INFO(  "Requesting Supported PIDs from the ECU " + mStreamRxID + " for SID " +
+                           std::to_string( toUType( sid ) ) )
             // Request supported PID range. Per ISO 15765, we can only send six PID at one time
             auto pidList =
                 std::vector<PID>( supportedPIDRange.begin(),
                                   supportedPIDRange.begin() + std::min( MAX_PID_RANGE, supportedPIDRange.size() ) );
             numRequests++;
+            FWE_LOG_INFO( " Requesting the PIDs.....")
             if ( requestPIDs( sid, pidList ) )
             {
                 // Wait and process the response
@@ -92,6 +94,10 @@ OBDOverCANECU::requestReceiveSupportedPIDs( const SID sid )
                     // log warning as all emissions-related OBD ECUs which support at least one of the
                     // services defined in J1979 shall support Service $01 and PID $00
                     FWE_LOG_WARN( "Failed to receive supported PID range from the ECU " + mStreamRxID );
+                }
+                else 
+                {
+                    FWE_LOG_INFO("Receiving the PIDs...")
                 }
             }
             // check if we need to send out more PID range request
@@ -116,6 +122,7 @@ OBDOverCANECU::requestReceiveSupportedPIDs( const SID sid )
 size_t
 OBDOverCANECU::requestReceiveEmissionPIDs( const SID sid )
 {
+    FWE_LOG_INFO("Requesting Emission PIDS....")
     EmissionInfo info;
     std::vector<PID> pids;
     // Request the PIDs ( up to 6 at a time )
@@ -146,6 +153,7 @@ OBDOverCANECU::pushPIDs( const EmissionInfo &info,
     {
         struct CollectedSignal collectedSignal;
         const auto signalType = signals.second.signalType;
+        FWE_LOG_INFO("Pushing the collected PIDs to Collected Signals");
         switch ( signalType )
         {
         case SignalType::UINT64:
@@ -222,6 +230,8 @@ OBDOverCANECU::requestReceivePIDs( SupportedPIDs::iterator &pidItr,
         {
             FWE_LOG_TRACE( "Received Emission PID data for SID: " + std::to_string( toUType( sid ) ) +
                            " with ECU: " + mStreamRxID );
+            FWE_LOG_INFO( "Received Emission PID data for SID: " + std::to_string( toUType( sid ) ) +
+                           " with ECU: " + mStreamRxID );
         }
         else
         {
@@ -253,6 +263,7 @@ OBDOverCANECU::receiveSupportedPIDs( const SID sid, SupportedPIDs &supportedPIDs
 bool
 OBDOverCANECU::requestPIDs( const SID sid, const std::vector<PID> &pids )
 {
+    FWE_LOG_INFO("Requesting PIDs...")
     mTxPDU.clear();
     // Assume that the PIDs belong to the SID, and that they are
     // supported by the ECU
@@ -261,6 +272,8 @@ OBDOverCANECU::requestPIDs( const SID sid, const std::vector<PID> &pids )
     {
         return false;
     }
+    FWE_LOG_INFO("Constructing PDU for requesting... (VSS to NVSS)");
+
 
     // First insert the SID
     mTxPDU.push_back( static_cast<uint8_t>( sid ) );
@@ -285,6 +298,10 @@ OBDOverCANECU::receivePIDs( const SID sid, const std::vector<PID> &pids, Emissio
     {
         FWE_LOG_WARN( "Failed to receive PDU for ECU " + mStreamRxID );
         return false;
+    }
+    else
+    {
+        FWE_LOG_INFO(" PIDs Received..")
     }
     // The info structure will be appended with the new decoded PIDs
     if ( !ecuResponse.empty() )

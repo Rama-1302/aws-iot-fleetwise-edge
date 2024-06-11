@@ -104,6 +104,11 @@ CollectionSchemeIngestionList::build()
         FWE_LOG_ERROR( "Error parsing collectionSchemes.proto binary" );
         return false;
     }
+     
+    else 
+    {
+        FWE_LOG_INFO("Binary Collection Scheme is parsed to VSS format...");
+    }
 
     // Ensure we start with an empty vector of collectionScheme pointers
     mVectorCollectionSchemePtr.clear();

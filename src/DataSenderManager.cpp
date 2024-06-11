@@ -61,6 +61,7 @@ DataSenderManager::processCollectedData( const TriggeredCollectionSchemeDataPtr 
 #endif
 )
 {
+    FWE_LOG_INFO("Processing Collected Data....")
     if ( triggeredCollectionSchemeDataPtr == nullptr )
     {
         FWE_LOG_WARN( "Nothing to send as the input is empty" );
@@ -90,8 +91,10 @@ DataSenderManager::setCollectionSchemeParameters(
 void
 DataSenderManager::transformTelemetryDataToProto(
     const TriggeredCollectionSchemeDataPtr &triggeredCollectionSchemeDataPtr )
-{
+{   
+    FWE_LOG_INFO(" Transforming the data to Binary..")
     // Clear old data and setup metadata
+    FWE_LOG_INFO(" Setting up the Vehicle Data.....");
     mProtoWriter.setupVehicleData( triggeredCollectionSchemeDataPtr, mCollectionSchemeParams.eventID );
 
     // Iterate through all the signals and add to the protobuf
@@ -293,6 +296,7 @@ DataSenderManager::send( const std::uint8_t *data, size_t size, std::shared_ptr<
 void
 DataSenderManager::uploadProto()
 {
+    FWE_LOG_INFO("Serializing the data....")
     if ( !serialize( mProtoOutput ) )
     {
         FWE_LOG_ERROR( "Data cannot be uploaded due to serialization failure" );
@@ -311,9 +315,14 @@ DataSenderManager::uploadProto()
     }
     else
     {
+        FWE_LOG_INFO("Sending the serialized data...")
         static_cast<void>(
             send( reinterpret_cast<const uint8_t *>( mProtoOutput.data() ), mProtoOutput.size(), mMQTTSender ) );
     }
+
+    std::string logMessage = " Serialized Output.....";
+    logMessage += reinterpret_cast<const char*>(mProtoOutput.data());
+    FWE_LOG_INFO(logMessage);
 }
 
 void

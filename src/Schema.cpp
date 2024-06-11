@@ -29,6 +29,7 @@ Schema::Schema( std::shared_ptr<IReceiver> receiverDecoderManifest,
 void
 Schema::onDecoderManifestReceived( const uint8_t *buf, size_t size )
 {
+    FWE_LOG_INFO("Decoder Data receievd call back function...");
     // Check for a empty input data
     if ( ( buf == nullptr ) || ( size == 0 ) )
     {
@@ -45,6 +46,10 @@ Schema::onDecoderManifestReceived( const uint8_t *buf, size_t size )
         FWE_LOG_ERROR( "DecoderManifest copyData from IoT core failed" );
         return;
     }
+    else
+    {
+        FWE_LOG_INFO(" Binary Decoder Copied ");
+    }
 
     // Successful copy, so we cache the decoderManifest in the Schema object
     mDecoderManifestListeners.notify( decoderManifestPtr );
@@ -54,13 +59,14 @@ Schema::onDecoderManifestReceived( const uint8_t *buf, size_t size )
 void
 Schema::onCollectionSchemeReceived( const uint8_t *buf, size_t size )
 {
+    FWE_LOG_INFO("collection Scheme Data receievd call back function...");
     // Check for a empty input data
     if ( ( buf == nullptr ) || ( size == 0 ) )
     {
         FWE_LOG_ERROR( "Received empty CollectionScheme List data from Cloud" );
         return;
     }
-
+    
     // Create an empty shared pointer which we'll copy the data to
     CollectionSchemeListPtr collectionSchemeListPtr = std::make_shared<CollectionSchemeIngestionList>();
 
@@ -69,6 +75,10 @@ Schema::onCollectionSchemeReceived( const uint8_t *buf, size_t size )
     {
         FWE_LOG_ERROR( "CollectionSchemeList copyData from IoT core failed" );
         return;
+    }
+    else
+    {
+        FWE_LOG_INFO(" Binary collection Scheme Copied ");
     }
 
     mCollectionSchemeListeners.notify( collectionSchemeListPtr );
@@ -117,7 +127,7 @@ Schema::transmitCheckin()
     if ( res == ConnectivityError::Success )
     {
         FWE_LOG_TRACE( "Checkin Message sent to the backend" );
-
+        FWE_LOG_INFO( " Checkin Sent to cloud..");
         // Trace log for more verbose Checkin Info
         std::string checkinDebugString;
         checkinDebugString = "Checkin data: timestamp: " + std::to_string( mProtoCheckinMsg.timestamp_ms_epoch() );
@@ -134,6 +144,7 @@ Schema::transmitCheckin()
         checkinDebugString += "]";
 
         FWE_LOG_TRACE( checkinDebugString );
+        FWE_LOG_INFO( checkinDebugString);
         return true;
     }
     else if ( res == ConnectivityError::NoConnection )

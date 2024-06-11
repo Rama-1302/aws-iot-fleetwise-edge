@@ -26,7 +26,7 @@ DataSenderProtoWriter::~DataSenderProtoWriter()
 void
 DataSenderProtoWriter::setupVehicleData( const TriggeredCollectionSchemeDataPtr triggeredCollectionSchemeData,
                                          uint32_t collectionEventID )
-{
+{   
     mVehicleDataMsgCount = 0U;
 
     mVehicleData.Clear();

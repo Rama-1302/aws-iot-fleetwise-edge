@@ -24,6 +24,7 @@ CANDecoder::decodeCANMessage( const uint8_t *frameData,
     uint8_t errorCounter = 0;
     uint32_t frameSizeInBits = static_cast<uint32_t>( frameSize * 8 );
     uint8_t multiplexorValue = UINT8_MAX;
+    FWE_LOG_INFO(" Decoding the frames...");
 
     // Check if the message is multiplexed
     if ( format.isMultiplexed() )
@@ -43,6 +44,8 @@ CANDecoder::decodeCANMessage( const uint8_t *frameData,
         {
             // Decode the multiplexor Value
             int64_t rawValue = extractSignalFromFrame( frameData, *it );
+            FWE_LOG_INFO( "Raw Value - Multiplexor ");
+            FWE_LOG_INFO( std::to_string(rawValue).c_str());
             multiplexorValue = static_cast<uint8_t>( static_cast<uint8_t>( rawValue ) * it->mFactor + it->mOffset );
 
             const auto CANsignalType = it->mSignalType;
@@ -110,6 +113,8 @@ CANDecoder::decodeCANMessage( const uint8_t *frameData,
 
             // Start decoding the signal, extract the value before scaling from the Frame.
             int64_t rawValue = extractSignalFromFrame( frameData, format.mSignals[i] );
+            FWE_LOG_INFO( "RAW VALUE ");
+            FWE_LOG_INFO( std::to_string( rawValue).c_str());
             const auto CANsignalType = format.mSignals[i].mSignalType;
             switch ( CANsignalType )
             {

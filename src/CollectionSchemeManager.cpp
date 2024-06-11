@@ -213,7 +213,8 @@ CollectionSchemeManager::doWork( void *data )
              */
             enabledCollectionSchemeMapChanged = false;
             auto inspectionMatrixOutput = std::make_shared<InspectionMatrix>();
-            collectionSchemeManager->inspectionMatrixExtractor( inspectionMatrixOutput );
+            FWE_LOG_INFO("Calling Inspection Matrix Extractor module");
+            collectionSchemeManager->inspectionMatrixExtractor( inspectionMatrixOutput );            
             collectionSchemeManager->inspectionMatrixUpdater( inspectionMatrixOutput );
             /*
              * extract decoder dictionary
@@ -223,6 +224,7 @@ CollectionSchemeManager::doWork( void *data )
              * the propagate the output to Vehicle Data Consumers
              */
             std::map<VehicleDataSourceProtocol, std::shared_ptr<DecoderDictionary>> decoderDictionaryMap;
+            FWE_LOG_INFO("Calling Decoder Dictionary Extractor...");
             collectionSchemeManager->decoderDictionaryExtractor( decoderDictionaryMap );
             // Publish decoder dictionaries update to all listeners
             collectionSchemeManager->decoderDictionaryUpdater( decoderDictionaryMap );
@@ -318,7 +320,8 @@ CollectionSchemeManager::doWork( void *data )
 /* callback function */
 void
 CollectionSchemeManager::onCollectionSchemeUpdate( const ICollectionSchemeListPtr &collectionSchemeList )
-{
+{   
+    FWE_LOG_INFO(" Binary collection Scheme Received in the collection scheme manager");
     std::lock_guard<std::mutex> lock( mSchemaUpdateMutex );
     mCollectionSchemeListInput = collectionSchemeList;
     mCollectionSchemeAvailable = true;
@@ -328,6 +331,7 @@ CollectionSchemeManager::onCollectionSchemeUpdate( const ICollectionSchemeListPt
 void
 CollectionSchemeManager::onDecoderManifestUpdate( const IDecoderManifestPtr &decoderManifest )
 {
+    FWE_LOG_INFO(" Binary Decoder Received in the collection scheme manager");
     std::lock_guard<std::mutex> lock( mSchemaUpdateMutex );
     mDecoderManifestInput = decoderManifest;
     mDecoderManifestAvailable = true;
@@ -421,6 +425,7 @@ CollectionSchemeManager::isCollectionSchemeLoaded()
 bool
 CollectionSchemeManager::processDecoderManifest()
 {
+    FWE_LOG_INFO("Building decoder...");
     if ( ( mDecoderManifest == nullptr ) || ( !mDecoderManifest->build() ) )
     {
         FWE_LOG_ERROR( " Failed to process the upcoming DecoderManifest." );
@@ -437,6 +442,7 @@ CollectionSchemeManager::processDecoderManifest()
     FWE_LOG_TRACE( "Replace decoder manifest " + mCurrentDecoderManifestID + " with " + mDecoderManifest->getID() +
                    " while " + std::to_string( mEnabledCollectionSchemeMap.size() ) + " active and " +
                    std::to_string( mIdleCollectionSchemeMap.size() ) + " idle collection schemes loaded" );
+    FWE_LOG_INFO("Storing the Binary Decoder manifest to persistent storage");
     // store the new DM, update mCurrentDecoderManifestID
     mCurrentDecoderManifestID = mDecoderManifest->getID();
     store( DataType::DECODER_MANIFEST );
@@ -465,12 +471,15 @@ CollectionSchemeManager::processDecoderManifest()
 bool
 CollectionSchemeManager::processCollectionScheme()
 {
+    FWE_LOG_INFO("Building Collection SCheme...");
     if ( ( mCollectionSchemeList == nullptr ) || ( !mCollectionSchemeList->build() ) )
     {
         FWE_LOG_ERROR( "Incoming CollectionScheme does not exist or fails to build!" );
         TraceModule::get().incrementAtomicVariable( TraceAtomicVariable::COLLECTION_SCHEME_ERROR );
         return false;
     }
+    
+    FWE_LOG_INFO("Storing the Binary collectionScheme to persistent storage");
     // Build is successful. Store collectionScheme
     store( DataType::COLLECTION_SCHEME_LIST );
     if ( isCollectionSchemeLoaded() )

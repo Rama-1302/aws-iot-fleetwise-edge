@@ -50,6 +50,7 @@ CollectionSchemeManager::sendCheckin()
         checkinLogStr += checkinMsg[i];
     }
     FWE_LOG_TRACE( "CHECKIN: " + checkinLogStr );
+    FWE_LOG_INFO ( "Checkins" + checkinLogStr );
 
     if ( mSchemaListenerPtr == nullptr )
     {
@@ -188,6 +189,7 @@ CollectionSchemeManager::store( DataType storeType )
     else
     {
         FWE_LOG_TRACE( logStr + " persisted successfully" );
+        FWE_LOG_INFO( logStr + " persisted successfully" );
     }
 }
 

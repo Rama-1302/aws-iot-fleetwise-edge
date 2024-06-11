@@ -74,11 +74,13 @@ void
 CollectionInspectionEngine::onChangeInspectionMatrix( const std::shared_ptr<const InspectionMatrix> &inspectionMatrix,
                                                       const TimePoint &currentTime )
 {
+    FWE_LOG_INFO("Inspection Matrix received....")
     // Clears everything in this class including all data in the signal history buffer
     clear();
     mActiveInspectionMatrix = inspectionMatrix; // Pointers and references into this memory are maintained so hold
                                                 // a shared_ptr to it so it does not get deleted
     mConditionsNotTriggeredWaitingPublished.set();
+    FWE_LOG_INFO("Adding signals from Inspection Matrix to Buffer...")
     for ( auto &p : mActiveInspectionMatrix->conditions )
     {
         // Check if we can add an additional condition to mConditions
@@ -183,6 +185,7 @@ CollectionInspectionEngine::onChangeInspectionMatrix( const std::shared_ptr<cons
     for ( size_t conditionIndex = 0; conditionIndex < mConditions.size(); conditionIndex++ )
     {
         auto &ac = mConditions[conditionIndex];
+        FWE_LOG_INFO("Adding conditions to buffer...")
         for ( auto &s : ac.mCondition.signals )
         {
             switch ( s.signalType )
@@ -571,6 +574,7 @@ CollectionInspectionEngine::evaluateConditions( const TimePoint &currentTime )
                          ( !mConditionsWithConditionCurrentlyTrue.test( i ) ) )
                     {
                         // Mark condition for the upload
+                        FWE_LOG_INFO("Condition evaluated to true , So marked for Upload ")
                         mConditionsNotTriggeredWaitingPublished.reset( i );
                         condition.mLastTrigger = currentTime;
                     }

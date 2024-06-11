@@ -203,6 +203,10 @@ DecoderManifestIngestion::build()
         // Error parsing proto binary
         return false;
     }
+    else 
+    {
+        FWE_LOG_INFO("Binary Decoder is parsed to VSS format...");
+    }
 
     // Do some validation of the DecoderManifest. Either CAN or OBD or complex signals should at least be specified.
     if ( ( mProtoDecoderManifest.can_signals_size() == 0 ) && ( mProtoDecoderManifest.obd_pid_signals_size() == 0 )

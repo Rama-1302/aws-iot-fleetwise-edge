@@ -191,6 +191,8 @@ ISOTPOverCANSenderReceiver::sendPDU( const std::vector<uint8_t> &pduData )
     int bytesWritten = static_cast<int>( write( socket, pduData.data(), pduData.size() ) );
     FWE_LOG_TRACE( "Socket: " + mStreamRxID + " sent a PDU of size " + std::to_string( bytesWritten ) + ": " +
                    getStringFromBytes( pduData ) );
+    FWE_LOG_INFO( "Socket: " + mStreamRxID + " sent a PDU of size " + std::to_string( bytesWritten ) + ": " +
+                   getStringFromBytes( pduData ) );
     return ( ( bytesWritten > 0 ) && ( bytesWritten == static_cast<int>( pduData.size() ) ) );
 }
 

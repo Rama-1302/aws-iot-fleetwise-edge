@@ -105,6 +105,7 @@ OBDDataDecoder::decodeEmissionPIDs( const SID sid,
                                     const std::vector<uint8_t> &inputData,
                                     EmissionInfo &info )
 {
+    FWE_LOG_INFO("Notfying the listeners about the Inspection Matrix...");
     // First look at whether we received a positive response
     // The positive response can be identified by 0x40 + SID.
     // If the input size is less than 3 ( Positive Response + Response byte + Requested PID )
@@ -322,6 +323,7 @@ OBDDataDecoder::calculateValueFromFormula( PID pid,
                                            size_t byteCounter,
                                            EmissionInfo &info )
 {
+    FWE_LOG_INFO("Calculating the Values from the formula....")
     // Before using formula, check it against rule
     if ( !isFormulaValid( pid, formula ) )
     {

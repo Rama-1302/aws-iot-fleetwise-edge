@@ -112,6 +112,7 @@ AwsIotChannel::subscribe()
         }
 
         FWE_LOG_TRACE( "Subscribe succeeded for topic " + mTopicName + " with QoS " + grantedQoS );
+        FWE_LOG_INFO( "SUbscribed to the Topic.."+ mTopicName);
         mSubscribed = true;
         subscribeFinishedPromise.set_value( true );
     };
@@ -191,6 +192,7 @@ AwsIotChannel::sendBuffer( const std::uint8_t *buf, size_t size, CollectionSchem
 
         if ( collectionSchemeParams.persist )
         {
+            FWE_LOG_INFO("Storing the collected serialized Data ")
             mPayloadManager->storeData( buf, size, collectionSchemeParams );
         }
         else
@@ -336,6 +338,7 @@ AwsIotChannel::publishMessage( const uint8_t *buf, size_t size )
         if ( result->wasSuccessful() )
         {
             FWE_LOG_TRACE( "Publish succeeded" );
+            FWE_LOG_INFO( "Message Published to " + mTopicName );
             mPayloadCountSent++;
         }
         else
@@ -377,6 +380,7 @@ AwsIotChannel::unsubscribeAsync()
     }
 
     FWE_LOG_TRACE( "Unsubscribing..." );
+    FWE_LOG_INFO( "Unscribing to the topics...");
     auto unsubPacket = std::make_shared<Aws::Crt::Mqtt5::UnsubscribePacket>();
     // coverity[cert_str51_cpp_violation] - pointer comes from std::string, which can't be null
     unsubPacket->WithTopicFilter( mTopicName.c_str() );

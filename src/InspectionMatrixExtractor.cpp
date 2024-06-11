@@ -74,6 +74,7 @@ void
 CollectionSchemeManager::addConditionData( const ICollectionSchemePtr &collectionScheme,
                                            ConditionWithCollectedData &conditionData )
 {
+    FWE_LOG_INFO("Adding condition data to the Matrix...");
     conditionData.minimumPublishIntervalMs = collectionScheme->getMinimumPublishIntervalMs();
     conditionData.afterDuration = collectionScheme->getAfterDurationMs();
     conditionData.includeActiveDtcs = collectionScheme->isActiveDTCsIncluded();
@@ -215,6 +216,7 @@ void
 CollectionSchemeManager::inspectionMatrixUpdater( const std::shared_ptr<const InspectionMatrix> &inspectionMatrix )
 {
     mInspectionMatrixChangeListeners.notify( inspectionMatrix );
+    FWE_LOG_INFO("Notfying the listeners about the Inspection Matrix...");
 }
 
 } // namespace IoTFleetWise

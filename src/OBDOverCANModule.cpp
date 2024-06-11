@@ -62,6 +62,8 @@ OBDOverCANModule::init( SignalBufferPtr signalBufferPtr,
     mPIDRequestIntervalSeconds = pidRequestIntervalSeconds;
     mDTCRequestIntervalSeconds = dtcRequestIntervalSeconds;
     mBroadcastRequests = broadcastRequests;
+    FWE_LOG_INFO("PID Request interval ");
+    FWE_LOG_INFO(std::to_string(mPIDRequestIntervalSeconds));
     return true;
 }
 
@@ -314,6 +316,7 @@ OBDOverCANModule::flush( size_t count, std::shared_ptr<OBDOverCANECU> &exceptECU
 bool
 OBDOverCANModule::autoDetectECUs( bool isExtendedID, std::vector<uint32_t> &canIDResponses )
 {
+    FWE_LOG_INFO(" Detecting ECUs....");
     struct sockaddr_can interfaceAddress = {};
     struct ifreq interfaceRequest = {};
     struct can_frame frame = {};
@@ -407,6 +410,7 @@ OBDOverCANModule::autoDetectECUs( bool isExtendedID, std::vector<uint32_t> &canI
         }
     }
     FWE_LOG_TRACE( "Detected number of ECUs: " + std::to_string( canIDResponses.size() ) );
+    FWE_LOG_INFO(  "Detected number of ECUs: " + std::to_string( canIDResponses.size() ));
     for ( std::size_t i = 0; i < canIDResponses.size(); ++i )
     {
         std::stringstream stream_rx;

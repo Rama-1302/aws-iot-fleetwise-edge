@@ -274,9 +274,11 @@ AwsIotConnectivityModule::createMqttConnection()
         os << "Data received on the topic: " << eventData.publishPacket->getTopic()
            << " with a payload length of: " << eventData.publishPacket->getPayload().len;
         FWE_LOG_TRACE( os.str() );
+        FWE_LOG_INFO( os.str() );
 
         // coverity[cert_str51_cpp_violation] - pointer comes from std::string, which can't be null
         auto topic = std::string( eventData.publishPacket->getTopic().c_str() );
+        FWE_LOG_INFO( "Data received from the cloud on the topic "+ topic );
         std::shared_ptr<AwsIotChannel> channel;
         {
             std::lock_guard<std::mutex> lock( mTopicToChannelMutex );

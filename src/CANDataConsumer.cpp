@@ -115,7 +115,8 @@ CANDataConsumer::processMessage( CANChannelNumericID channelId,
             {
                 std::vector<CANDecodedSignal> decodedSignals;
                 if ( CANDecoder::decodeCANMessage( data, dataLength, format, signalIDsToCollect, decodedSignals ) )
-                {
+                {    
+                    FWE_LOG_INFO(" Decoding signals completed....")
                     // Create vector of Collected Signal Object
                     CollectedSignalsGroup collectedSignalsGroup;
                     for ( auto const &signal : decodedSignals )
@@ -130,18 +131,21 @@ CANDataConsumer::processMessage( CANChannelNumericID channelId,
                                                                timestamp,
                                                                signal.mPhysicalValue.signalValue.uint64Val,
                                                                signal.mSignalType };
+                            FWE_LOG_INFO("after decoding....Collected Signals UINT64 " + std::to_string(signal.mPhysicalValue.signalValue.uint64Val) );
                             break;
                         case SignalType::INT64:
                             collectedSignal = CollectedSignal{ signal.mSignalID,
                                                                timestamp,
                                                                signal.mPhysicalValue.signalValue.int64Val,
                                                                signal.mSignalType };
+                            FWE_LOG_INFO(" after decoding.....Collected Signals INT64 " + std::to_string(signal.mPhysicalValue.signalValue.int64Val) );
                             break;
                         default:
                             collectedSignal = CollectedSignal{ signal.mSignalID,
                                                                timestamp,
                                                                signal.mPhysicalValue.signalValue.doubleVal,
                                                                signal.mSignalType };
+                            FWE_LOG_INFO("after decoding....Collected Signals double " + std::to_string(signal.mPhysicalValue.signalValue.doubleVal) );
                             break;
                         }
                         // Only add valid signals to the vector
@@ -150,6 +154,7 @@ CANDataConsumer::processMessage( CANChannelNumericID channelId,
                             collectedSignalsGroup.push_back( collectedSignal );
                         }
                     }
+                    FWE_LOG_INFO("Signals are collectd and stored...")
                     collectedDataFrame.mCollectedSignals = collectedSignalsGroup;
                 }
                 else
